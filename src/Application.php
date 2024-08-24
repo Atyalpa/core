@@ -4,28 +4,25 @@ declare(strict_types=1);
 
 namespace Atyalpa\Core;
 
-use Dotenv\Dotenv;
-
+use Atyalpa\Core\Services\Service;
 use Atyalpa\Http\RequestHandler;
 use Atyalpa\Http\ResponseHandler;
 use Atyalpa\Routing\Handlers\MiddlewareHandler;
 use Atyalpa\Routing\Router;
-
-use Atyalpa\Core\Services\Service;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
-use Fig\Http\Message\StatusCodeInterface;
-
+use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
-use Psr\Http\Message\ServerRequestInterface;
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Relay\Relay;
 
 class Application implements RequestHandlerInterface
 {
-    public const VERSION = "0.1";
+    public const VERSION = '0.1';
 
     protected string $basePath;
 
@@ -45,12 +42,12 @@ class Application implements RequestHandlerInterface
 
     public function routePath(): string
     {
-        return $this->basePath . '/web/routes.php';
+        return $this->basePath.'/web/routes.php';
     }
 
     public function servicePath(): string
     {
-        return $this->basePath . '/app/Services.php';
+        return $this->basePath.'/app/Services.php';
     }
 
     /**
@@ -73,10 +70,11 @@ class Application implements RequestHandlerInterface
         switch ($route[0]) {
             case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = $route[1];
+
                 return (new ResponseHandler(
                     StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED,
                     [],
-                    json_encode(['error' => 'Supported methods are ' . implode(', ', $allowedMethods) . '.'])
+                    json_encode(['error' => 'Supported methods are '.implode(', ', $allowedMethods).'.'])
                 ))->send();
             case Dispatcher::FOUND:
                 $controller = $route[1]['controller'];
@@ -90,7 +88,7 @@ class Application implements RequestHandlerInterface
                         return $response->send();
                     }
 
-                    throw new \Exception('The response must of type ' . ResponseHandler::class);
+                    throw new \Exception('The response must of type '.ResponseHandler::class);
                 };
 
                 $middlewares = (new MiddlewareHandler($middlewares))->handle();
