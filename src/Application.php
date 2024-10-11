@@ -56,7 +56,8 @@ class Application implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->container->set(RequestHandler::class, new RequestHandler($request));
+        $requestHandler = new RequestHandler($request);
+        $this->container->set(RequestHandler::class, $requestHandler);
 
         /** @var Router $router */
         $router = $this->container->make(Router::class);
@@ -94,7 +95,7 @@ class Application implements RequestHandlerInterface
                 $middlewares = (new MiddlewareHandler($middlewares))->handle();
                 $relay = new Relay($middlewares);
 
-                return $relay->handle($request);
+                return $relay->handle($requestHandler);
             case Dispatcher::NOT_FOUND:
             default:
                 return (new ResponseHandler(
